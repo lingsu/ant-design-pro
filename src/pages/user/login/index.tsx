@@ -7,7 +7,6 @@ import {
   UserOutlined,
   WeiboCircleOutlined,
 } from '@ant-design/icons';
-import logo from '@/assets/logo.svg';
 import { Alert, Space, message, Tabs } from 'antd';
 import React, { useState } from 'react';
 import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
@@ -34,9 +33,10 @@ const LoginMessage: React.FC<{
  * 此方法会跳转到 redirect 参数所在的位置
  */
 const goto = () => {
+  if (!history) return;
   const { query } = history.location;
   const { redirect } = query as { redirect: string };
-  window.location.href = redirect || '/';
+  history.push(redirect || '/');
 };
 
 const Login: React.FC<{}> = () => {
@@ -66,14 +66,12 @@ const Login: React.FC<{}> = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.lang}>
-        <SelectLang />
-      </div>
+      <div className={styles.lang}>{SelectLang && <SelectLang />}</div>
       <div className={styles.content}>
         <div className={styles.top}>
           <div className={styles.header}>
             <Link to="/">
-              <img alt="logo" className={styles.logo} src={logo} />
+              <img alt="logo" className={styles.logo} src="/logo.svg" />
               <span className={styles.title}>Ant Design</span>
             </Link>
           </div>
@@ -86,6 +84,12 @@ const Login: React.FC<{}> = () => {
               autoLogin: true,
             }}
             submitter={{
+              searchConfig: {
+                submitText: intl.formatMessage({
+                  id: 'pages.login.submit',
+                  defaultMessage: '登录',
+                }),
+              },
               render: (_, dom) => dom.pop(),
               submitButtonProps: {
                 loading: submitting,
